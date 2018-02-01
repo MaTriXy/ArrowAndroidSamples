@@ -1,18 +1,19 @@
 package com.github.jorgecastillo.kotlinandroid.data.datasource.remote
 
+import arrow.HK
+import arrow.core.IdHK
+import arrow.data.Reader
+import arrow.data.Try
+import arrow.data.map
+import arrow.effects.Async
+import arrow.effects.IO
+import arrow.effects.monadSuspend
+import arrow.syntax.either.right
+import arrow.typeclasses.bindingCatch
 import com.github.jorgecastillo.kotlinandroid.di.context.SuperHeroesContext.GetHeroDetailsContext
 import com.github.jorgecastillo.kotlinandroid.di.context.SuperHeroesContext.GetHeroesContext
 import com.karumi.marvelapiclient.model.CharacterDto
 import com.karumi.marvelapiclient.model.CharactersQuery.Builder
-import kategory.HK
-import kategory.Reader
-import kategory.Try
-import kategory.bindingE
-import kategory.effects.AsyncContext
-import kategory.effects.IO
-import kategory.effects.monadError
-import kategory.map
-import kategory.right
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.async
 
@@ -24,8 +25,8 @@ import kotlinx.coroutines.experimental.async
  * required execution context.
  */
 
-fun fetchAllHeroes() = Reader.ask<GetHeroesContext>().map({ ctx ->
-  IO.monadError().bindingE {
+fun fetchAllHeroes() = Reader.ask<IdHK, GetHeroesContext>().map({ ctx ->
+  IO.monadSuspend().bindingCatch {
     runInAsyncContext(
         f = { queryForHeroes(ctx) },
         onError = { IO.raiseError<List<CharacterDto>>(it) },
@@ -35,8 +36,8 @@ fun fetchAllHeroes() = Reader.ask<GetHeroesContext>().map({ ctx ->
   }
 })
 
-fun fetchHeroDetails(heroId: String) = Reader.ask<GetHeroDetailsContext>().map({ ctx ->
-  IO.monadError().bindingE {
+fun fetchHeroDetails(heroId: String) = Reader.ask<IdHK, GetHeroDetailsContext>().map({ ctx ->
+  IO.monadSuspend().bindingCatch {
     runInAsyncContext(
         f = { queryForHero(ctx, heroId) },
         onError = { IO.raiseError<List<CharacterDto>>(it) },
@@ -59,8 +60,8 @@ private fun queryForHero(ctx: GetHeroDetailsContext, heroId: String): List<Chara
 private fun <F, A, B> runInAsyncContext(
     f: () -> A,
     onError: (Throwable) -> B,
-    onSuccess: (A) -> B, AC: AsyncContext<F>): HK<F, B> {
-  return AC.runAsync { proc ->
+    onSuccess: (A) -> B, AC: Async<F>): HK<F, B> {
+  return AC.async { proc ->
     async(CommonPool) {
       val result = Try { f() }.fold(onError, onSuccess)
       proc(result.right())
