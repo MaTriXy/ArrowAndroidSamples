@@ -1,7 +1,7 @@
 ArrowAndroidSamples
 ===================
 [![Build Status](https://travis-ci.org/JorgeCastilloPrz/ArrowAndroidSamples.svg?branch=improve-reader-usage)](https://travis-ci.org/JorgeCastilloPrz/ArrowAndroidSamples)
-[![Kotlin version badge](https://img.shields.io/badge/kotlin-1.2.10-blue.svg)](http://kotlinlang.org/)
+[![Kotlin version badge](https://img.shields.io/badge/kotlin-1.2.41-blue.svg)](http://kotlinlang.org/)
 
 <img height="100" src="https://avatars2.githubusercontent.com/u/29458023?v=4&amp;s=200" width="100">
 
@@ -82,7 +82,7 @@ to it (`when` statement) to achieve different behaviors depending on that.
 
 ## Alternative roads to Dependency Injection
 From centuries ago, Android devs have been using complex frameworks like Dagger to achieve 
-dependency injection. But **DI is just a concept not bound to any library. It's is all about 
+dependency injection. But **DI is just a concept not bound to any library. It's all about 
 passing collaborators to your classes from the outside world**. That means DI would also be to 
 just add some setters or a constructor with some collaborator arguments to your class. 
 
